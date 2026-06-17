@@ -57,7 +57,6 @@ return {
         "eslint_d",      -- linter
         "prettierd",     -- formatter (html, css, ts, md, json)
         -- Bash
-        "shellcheck",    -- linter
         "shfmt",         -- formatter
       },
       automatic_installation = true,
@@ -67,30 +66,41 @@ return {
   -- none-ls: hooks linters/formatters into the LSP diagnostics pipeline
   {
     "nvimtools/none-ls.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvimtools/none-ls-extras.nvim", -- community builtins removed from core (ruff, eslint_d, shellcheck)
+    },
     config = function()
       local null_ls = require("null-ls")
 
+      -- Only register a source if its binary is available; prevents errors on
+      -- first launch before mason has finished installing tools.
+      local function with(source, cmd)
+        if vim.fn.executable(cmd) == 1 then return source end
+      end
+
       null_ls.setup({
-        sources = {
-          -- Python
-          null_ls.builtins.diagnostics.ruff,
-          null_ls.builtins.formatting.ruff_format,
+        sources = vim.tbl_filter(function(v) return v ~= nil end, {
+          -- Python (ruff moved to none-ls-extras)
+          with(require("none-ls.diagnostics.ruff"),       "ruff"),
+          with(require("none-ls.formatting.ruff_format"), "ruff"),
 
           -- Lua
-          null_ls.builtins.formatting.stylua,
+          with(null_ls.builtins.formatting.stylua,        "stylua"),
 
           -- C / C++
-          null_ls.builtins.formatting.clang_format,
+          with(null_ls.builtins.formatting.clang_format,  "clang-format"),
 
-          -- TypeScript / JS / HTML / CSS / Markdown
-          null_ls.builtins.diagnostics.eslint_d,
-          null_ls.builtins.formatting.prettierd,
+          -- TypeScript / JS (eslint_d moved to none-ls-extras)
+          with(require("none-ls.diagnostics.eslint_d"),   "eslint_d"),
+          with(require("none-ls.formatting.eslint_d"),    "eslint_d"),
+
+          -- HTML / CSS / Markdown / JSON / TS
+          with(null_ls.builtins.formatting.prettierd,     "prettierd"),
 
           -- Bash
-          null_ls.builtins.diagnostics.shellcheck,
-          null_ls.builtins.formatting.shfmt,
-        },
+          with(null_ls.builtins.formatting.shfmt,         "shfmt"),
+        }),
       })
     end,
   },

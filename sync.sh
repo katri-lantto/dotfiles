@@ -21,6 +21,7 @@ declare -a FILES=(
   "$HOME/.config/nvim/lua/plugins/mason.lua:$REPO/nvim/lua/plugins/mason.lua"
   "$HOME/.config/nvim/lua/plugins/telescope.lua:$REPO/nvim/lua/plugins/telescope.lua"
   "$HOME/.config/nvim/lua/plugins/cmp.lua:$REPO/nvim/lua/plugins/cmp.lua"
+  "$HOME/.config/nvim/lua/plugins/copilot.lua:$REPO/nvim/lua/plugins/copilot.lua"
   "$HOME/.config/kitty/kitty.conf:$REPO/kitty/kitty.conf"
 )
 

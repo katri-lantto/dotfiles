@@ -18,6 +18,7 @@ return {
     event = "InsertEnter",
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",     -- LSP source
+      "zbirenbaum/copilot-cmp",   -- Copilot (Claude) source
       "hrsh7th/cmp-buffer",       -- buffer words source
       "hrsh7th/cmp-path",         -- filesystem path source
       "saadparwaiz1/cmp_luasnip", -- snippet source
@@ -69,7 +70,8 @@ return {
         }),
 
         sources = cmp.config.sources({
-          { name = "nvim_lsp" }, -- highest priority: LSP
+          { name = "copilot" },  -- highest priority: Copilot (Claude)
+          { name = "nvim_lsp" }, -- LSP
           { name = "luasnip" },  -- snippets
           { name = "buffer" },   -- words in open buffers
           { name = "path" },     -- file paths
@@ -79,6 +81,7 @@ return {
         formatting = {
           format = function(entry, item)
             local labels = {
+              copilot  = "[Claude]",
               nvim_lsp = "[LSP]",
               luasnip  = "[Snip]",
               buffer   = "[Buf]",
